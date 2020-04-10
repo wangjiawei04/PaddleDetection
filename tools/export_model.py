@@ -69,6 +69,17 @@ def save_infer_model(FLAGS, exe, feed_vars, test_fetches, infer_prog):
         executor=exe,
         main_program=infer_prog,
         params_filename="__params__")
+    import paddle_serving_client.io as server_io
+    feed_var_dict = {}
+    for var in feed_vars.values():
+        if var.name in feed_var_names:
+            feed_var_dict[var.name] = var
+            print(var.name, var.shape)
+    fetch_var_dict = {}
+    for x in target_vars:
+        fetch_var_dict[x.name] = x
+        print (x.name, x.shape)
+    server_io.save_model("pddet_serving_model", "pddet_client_conf", feed_var_dict, fetch_var_dict, infer_prog)
 
 
 def main():
